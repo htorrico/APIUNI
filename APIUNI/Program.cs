@@ -31,7 +31,11 @@ builder.Services.AddAuthentication(options =>
 });
 
 
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("RequireAdministratorRole",policy => policy.RequireRole("Administrator"));
+    options.AddPolicy("RequireAdministratorRole", policy => policy.RequireRole("Administrator"));
+});
 
 
 // Add services to the container.
@@ -72,7 +76,7 @@ app.MapGet("/security/getMessage", () => "Hello World!").RequireAuthorization();
 app.MapPost("/security/createToken",
 [AllowAnonymous] (User user) =>
 {
-    if (user.UserName == "joydip" && user.Password == "joydip123")
+    if (user.UserName == "htorrico" && user.Password == "123456")
     {
         var issuer = builder.Configuration["Jwt:Issuer"];
         var audience = builder.Configuration["Jwt:Audience"];
@@ -85,8 +89,8 @@ app.MapPost("/security/createToken",
                 new Claim("Id", Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
                 new Claim(JwtRegisteredClaimNames.Email, user.UserName),
-                new Claim(JwtRegisteredClaimNames.Jti,
-                Guid.NewGuid().ToString())
+                new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),                
+                new Claim(ClaimTypes.Role, "Administrator"),
              }),
             Expires = DateTime.UtcNow.AddMinutes(5),
             Issuer = issuer,
@@ -95,6 +99,8 @@ app.MapPost("/security/createToken",
             (new SymmetricSecurityKey(key),
             SecurityAlgorithms.HmacSha512Signature)
         };
+        
+
         var tokenHandler = new JwtSecurityTokenHandler();
         var token = tokenHandler.CreateToken(tokenDescriptor);
         var jwtToken = tokenHandler.WriteToken(token);
