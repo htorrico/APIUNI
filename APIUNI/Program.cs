@@ -7,8 +7,24 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
+
+
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
 var builder = WebApplication.CreateBuilder(args);
 
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+                      policy =>
+                      {
+                          policy.WithOrigins("http://localhost:42010",
+                                              "http://www.contoso.com")
+                                              .AllowAnyHeader()
+                                              .AllowAnyMethod();
+                      });
+});
 
 
 builder.Services.AddAuthentication(options =>
@@ -60,6 +76,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+
+app.UseCors(MyAllowSpecificOrigins);
 
 //app.UseAuthorization();
 app.UseAuthentication();
