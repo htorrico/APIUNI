@@ -1,4 +1,5 @@
 using APIUNI.Request;
+using APIUNI.Roles;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
@@ -31,10 +32,12 @@ builder.Services.AddAuthentication(options =>
 });
 
 
+//Configurar Roles para la aplicación
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("RequireAdministratorRole",policy => policy.RequireRole("Administrator"));
-    options.AddPolicy("RequireAdministratorRole", policy => policy.RequireRole("Administrator"));
+    options.AddPolicy("TestPolicy",policy => 
+    policy.RequireRole("Administrator","User","SuperUser","Invited"));
+    
 });
 
 
@@ -46,11 +49,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 
-
-
-
 var app = builder.Build();
-
 
 
 // Configure the HTTP request pipeline.
@@ -76,12 +75,21 @@ app.MapGet("/security/getMessage", () => "Hello World!").RequireAuthorization();
 app.MapPost("/security/createToken",
 [AllowAnonymous] (User user) =>
 {
-    if (user.UserName == "htorrico" && user.Password == "123456")
+    // Validar la existencia del usuario
+    var userValidationResult = ValidationHelper.GetRole(user.UserName, user.Password);
+
+
+    if (userValidationResult.IsValid)
     {
+        System.Globalization.CultureInfo cultureinfo =
+        new System.Globalization.CultureInfo("es-PE");
+
         var issuer = builder.Configuration["Jwt:Issuer"];
         var audience = builder.Configuration["Jwt:Audience"];
         var key = Encoding.ASCII.GetBytes
         (builder.Configuration["Jwt:Key"]);
+
+        
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(new[]
@@ -90,9 +98,9 @@ app.MapPost("/security/createToken",
                 new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
                 new Claim(JwtRegisteredClaimNames.Email, user.UserName),
                 new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),                
-                new Claim(ClaimTypes.Role, "Administrator"),
-             }),
-            Expires = DateTime.UtcNow.AddMinutes(5),
+                new Claim(ClaimTypes.Role, userValidationResult.Role),
+             }),            
+            Expires = DateTime.UtcNow.AddMinutes(5),            
             Issuer = issuer,
             Audience = audience,
             SigningCredentials = new SigningCredentials
