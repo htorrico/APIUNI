@@ -20,7 +20,7 @@ builder.Services.AddCors(options =>
                       policy =>
                       {
                           policy.WithOrigins("http://localhost:4200",
-                                              "http://www.contoso.com")
+                                              "http://www.hugotorrico.com")
                                               .AllowAnyHeader()
                                               .AllowAnyMethod();
                       });
@@ -80,14 +80,12 @@ app.UseHttpsRedirection();
 
 app.UseCors(MyAllowSpecificOrigins);
 
-//app.UseAuthorization();
+
 app.UseAuthentication();
 app.UseAuthorization();
 
 
 app.MapControllers();
-
-
 
 app.MapGet("/security/getMessage", () => "Hello World!").RequireAuthorization();
 
@@ -100,9 +98,7 @@ app.MapPost("/security/createToken",
 
     if (userValidationResult.IsValid)
     {
-        System.Globalization.CultureInfo cultureinfo =
-        new System.Globalization.CultureInfo("es-PE");
-
+       
         var issuer = builder.Configuration["Jwt:Issuer"];
         var audience = builder.Configuration["Jwt:Audience"];
         var key = Encoding.ASCII.GetBytes

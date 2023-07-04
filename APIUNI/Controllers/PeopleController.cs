@@ -10,32 +10,45 @@ namespace APIUNI.Controllers
     
     public class PeopleController : ControllerBase
     {
-        
+
+        [Authorize]
         [HttpGet(Name = "Get")]
         public IEnumerable<PersonResponse> Get()
         {
-            return null;
+            List<PersonResponse> response = new List<PersonResponse>();
+            response.Add(new PersonResponse { FirstName = "Hugo", LastName = "Torrico" });
+            response.Add(new PersonResponse { FirstName = "Juan", LastName = "Torrico" });
+            return response;
         }
 
-        [Authorize]
-        [HttpGet(Name = "Get2")]
-        public IEnumerable<PersonResponse> Get2()
+        [Authorize(Roles = "Invited" )]
+        [HttpGet(Name = "GetInvited")]
+        public IEnumerable<PersonResponse> GetInvited()
         {
-            return null;
+            List<PersonResponse> response = new List<PersonResponse>();
+            response.Add(new PersonResponse { FirstName = "Hugo", LastName = "Torrico" });
+            response.Add(new PersonResponse { FirstName = "Juan", LastName = "Torrico" });
+            return response;
         }
 
         [Authorize(Roles ="Administrator")]
-        [HttpGet(Name = "Get3")]
-        public IEnumerable<PersonResponse> Get3()
+        [HttpGet(Name = "GetAdministrator")]
+        public IEnumerable<PersonResponse> GetAdministrator()
         {
-            return null;
+            List<PersonResponse> response = new List<PersonResponse>();
+            response.Add(new PersonResponse { FirstName = "Hugo", LastName = "Torrico" });
+            response.Add(new PersonResponse { FirstName = "Juan", LastName = "Torrico" });
+            return response;
         }
 
-        [Authorize(Roles = "User")]
-        [HttpGet(Name = "Get4")]
-        public IEnumerable<PersonResponse> Get4()
+        [Authorize(Roles = "SuperUser")]
+        [HttpGet(Name = "GetSuperUser")]
+        public IEnumerable<PersonResponse> GetSuperUser()
         {
-            return null;
+            List<PersonResponse> response = new List<PersonResponse>();
+            response.Add(new PersonResponse { FirstName = "Hugo", LastName = "Torrico" });
+            response.Add(new PersonResponse { FirstName = "Juan", LastName = "Torrico" });
+            return response;
         }
     }
 }
