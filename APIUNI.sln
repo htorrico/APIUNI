@@ -5,11 +5,6 @@ VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "APIUNI", "APIUNI\APIUNI.csproj", "{F851A0C3-90E5-4916-81AA-516C797E567C}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{4F3BA90E-817B-419F-B353-0BD31F44D5E0}"
-	ProjectSection(SolutionItems) = preProject
-		..\..\..\Downloads\SeguridadAPIUNI.docx = ..\..\..\Downloads\SeguridadAPIUNI.docx
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
